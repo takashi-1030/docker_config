@@ -1,0 +1,18 @@
+
+
+.left { float: left }
+.right { float: right }
+.clear { clear: both }
+
+#script-warning, #loading { display: none }
+#script-warning { font-weight: bold; color: red }
+
+#calendar {
+max-width: 900px;
+margin: 40px auto;
+padding: 0 10px;
+}
+
+.tzo {
+color: #000;
+}
