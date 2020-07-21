@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reserve;
+use App\Models\AdminUser;
+use Validator;
 
 class AdminController extends Controller
 {
@@ -105,5 +107,91 @@ class AdminController extends Controller
         $reserve_record->save();
 
         return redirect()->action('AdminController@getIndex');
+    }
+//管理者ログイン
+    public function adminGetIndex()
+    {
+        return view('admin/login/login');
+    }
+
+    public function adminPostIndex(Request $request)
+    {
+        return view('admin/login/result');
+    } 
+//管理者登録・削除・一覧画面
+    public function adminList()
+    {
+        try {
+            $db_result = AdminUser::all();
+            return view('admin/list/adminList')->with('adminList', $db_result);
+        } catch (Exception $e) {
+            return view('error');
+        }
+    }
+
+    public function adminCreate()
+    {
+        return view('admin/adminCreate/input');
+    }
+
+    public function adminCreateCheck(Request $request)
+    {
+        //リクエストパラメータを配列として全件取得
+        $input = $request->all();
+
+        //validation
+        $rules = [
+            'admin_id' => 'required|regex:/^[a-zA-Z0-9-]+$/',
+            'password' => 'required|string|min:6',
+            'name' => 'required|string',
+            'tel' => 'required|regex:/^[0-9]{2,4}-[0-9]{2,4}-[0-9]{3,4}$/',
+            'email' => 'required|email',
+        ];
+        $error_msg = [
+            'required' => ':attributeは必須入力です。'
+        ];
+        Validator::make($input, $rules, $error_msg)->validate();
+
+        $this->validate($request, $rules);
+
+        return view('admin/adminCreate/check')->with('input', $request->all());
+    }
+
+    public function adminCreateDone(Request $request)
+    {
+        try {
+            $admin_record = new AdminUser;
+            $admin_record->admin_id = $request->admin_id;
+            $admin_record->name = $request->name;
+            $admin_record->password = $request->password;
+            $admin_record->tel = $request->tel;
+            $admin_record->email = $request->email;
+            $admin_record->save();
+
+            return redirect()->action('AdminController@adminList');
+        } catch (Exception $e) {
+            return view('error');
+        }
+    }
+
+    public function adminDelete($id)
+    {
+        try {
+            $disp_data = AdminUser::find($id);
+            return view('Admin/adminDelete/check')->with('data', $disp_data);
+        } catch (Exception $e) {
+            return view('error');
+        }
+    }
+
+    public function adminDeleteDone($id)
+    {
+        try {
+            $delete_user = AdminUser::find($id);
+            $delete_user->delete();
+            return redirect()->action('AdminController@adminList');
+        } catch (Exception $e) {
+            return view('error');
+        }
     }
 }

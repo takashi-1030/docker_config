@@ -8,8 +8,6 @@
 <script src="{{ asset('calendar/packages/daygrid/main.js') }}"></script>
 <script src="{{ asset('calendar/packages/timegrid/main.js') }}"></script>
 <script src="{{ asset('calendar/packages/core/locales-all.js') }}"></script>
-<script src="{{ asset('js/ajax-setup.js') }}"></script>
-<script src="{{ asset('js/event-control.js') }}"></script>
 @stop
 
 @section('styles')

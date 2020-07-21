@@ -18,6 +18,10 @@ Route::post('/guest_info', 'ReserveController@postInfo');
 Route::post('/check', 'ReserveController@reserveCheck');
 Route::post('/reserve_done', 'ReserveController@reserveDone');
 
+//管理者ログイン
+Route::get('/admin/login', 'AdminController@adminGetIndex');
+Route::post('/admin/login', 'AdminController@adminPostIndex');
+
 //管理者閲覧画面
 Route::get('/admin', 'AdminController@getIndex');
 Route::get('/admin/reserve/{id}', 'AdminController@getReserve');
@@ -29,10 +33,13 @@ Route::post('/admin/add', 'AdminController@reserveCheck');
 Route::post('/admin/add/done', 'AdminController@addDone');
 Route::get('/admin/confirm/{id}', 'AdminController@reserveConfirm');
 
+//管理者登録・削除・一覧画面
+Route::get('/admin/list', 'AdminController@adminList');
+Route::get('/admin/adminCreate', 'AdminController@adminCreate');
+Route::post('/admin/adminCreate', 'AdminController@adminCreateCheck');
+Route::post('/admin/adminCreate/done', 'AdminController@adminCreateDone');
+Route::get('/admin/adminDelete/{id}', 'AdminController@adminDelete');
+Route::post('/admin/adminDelete/done/{id}', 'AdminController@adminDeleteDone');
+
 //Event取得
 Route::get('/setEvent', 'EventController@setEvent');
-
-//zoom API
-Route::get('/meetings', 'MeetingController@show');
-Route::get('/meetings/create', 'MeetingController@create');
-Route::post('/meetings/create' ,'MeetingController@store');
