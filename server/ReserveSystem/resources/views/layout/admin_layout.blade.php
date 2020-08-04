@@ -27,14 +27,22 @@
                     <a class="nav-link" href="/admin/list">管理者一覧</a>
                 </li>
                 <li class="nav-item active">
+                    <a class="nav-link" href="/admin/customerList">お客様一覧</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin/search">お客様検索</a>
+                </li>
+                <li class="nav-item active">
                     <a class="nav-link" href="">設定</a>
                 </li>
             </ul>
         </div>
+        {{-- 検索欄
         <form class="form-inline">
             <input type="search" class="form-control mr-sm-1">
             <button type="submit" class="btn btn-primary">検索</button>
         </form>
+        --}}
     </nav>
 </header>
 <main>

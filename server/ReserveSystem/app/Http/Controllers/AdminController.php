@@ -194,4 +194,41 @@ class AdminController extends Controller
             return view('error');
         }
     }
+    
+    //お客様一覧
+    
+    public function customerList()
+    {
+        try{
+            $customer = Reserve::select('name','tel','email')->distinct()->get();
+            return view('admin/customer/customerList')->with('customerList', $customer);
+        } catch (Exception $e) {
+            return view('error');
+        }
+    }
+    //検索
+
+    public function search()
+    {
+        return view('admin/search/search');
+    }
+
+    public function searchDone(Request $request)
+    {
+        $date = $request->date;
+        $name = $request->name;
+        $query = Reserve::query();
+
+        if(!empty($date)){
+            $query->where('date',$date)->get();
+        }
+
+        if(!empty($name)){
+            $query->where('name','like','%'.$name.'%')->get();
+        }
+        
+        $record = $query->get();
+
+        return view('admin/search/done')->with('record',$record);
+    }
 }
