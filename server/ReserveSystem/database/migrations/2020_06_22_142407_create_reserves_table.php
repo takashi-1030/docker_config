@@ -21,7 +21,7 @@ class CreateReservesTable extends Migration
             $table->date('date');
             $table->time('time');
             $table->integer('number');
-            $table->integer('seat');
+            $table->string('seat');
             $table->string('ok_flg',2)->nullable();
             $table->timestamps();
         });

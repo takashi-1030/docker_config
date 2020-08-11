@@ -1,0 +1,23 @@
+.slick {
+    width: 95%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.slick-prev:before,.slick-next:before {
+    color: black;
+}
+
+.btn-carousel {
+    margin: 0 5px;
+    height: 30px;
+    background-color: #3097D1;
+    color: #fff;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 3px;
+}
+
+.btn-carousel:hover {
+    background-color: #1d648d;
+}

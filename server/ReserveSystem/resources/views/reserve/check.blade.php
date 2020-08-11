@@ -13,14 +13,14 @@
                 <td>{{ $info['year'] }}年{{ $info['month'] }}月{{ $info['day'] }}日({{ $info['week'] }})</td>
                 </tr>
                 <tr>
-                <td>時間</td>
-                <td>{{ $info['time'] }}～</td>
-                </tr>
-                <tr>
                 <td>人数</td>
                 <td>{{ $info['number'] }}名</td>
                 </tr>
                 <tr>
+                <tr>
+                <td>時間</td>
+                <td>{{ $info['time'] }}～</td>
+                </tr>
                 <td>座席</td>
                 <td>{{ $info['seat'] }}</td>
                 </tr>
@@ -45,8 +45,8 @@
         <input type="hidden" name="time" value="{{ $info['time'] }}">
         <input type="hidden" name="number" value="{{ $info['number'] }}">
         <input type="hidden" name="seat" value="{{ $info['seat'] }}">
-        <input type="button" value="戻る" onclick=history.back() class="btn btn-secondary">
         <input type="submit" value="予約" class="btn btn-primary">
+        <input type="button" value="戻る" onclick=history.back() class="btn btn-secondary">
         </form>
     </div>
 </div>

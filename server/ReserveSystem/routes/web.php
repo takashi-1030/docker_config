@@ -18,6 +18,9 @@ Route::post('/guest_info', 'ReserveController@postInfo');
 Route::post('/check', 'ReserveController@reserveCheck');
 Route::post('/reserve_done', 'ReserveController@reserveDone');
 
+//ajax
+Route::get('/seat', 'ReserveController@ajax');
+
 //管理者ログイン
 Route::get('/admin/login', 'AdminController@adminGetIndex');
 Route::post('/admin/login', 'AdminController@adminPostIndex');
