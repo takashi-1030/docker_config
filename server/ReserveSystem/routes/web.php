@@ -44,5 +44,12 @@ Route::post('/admin/adminCreate/done', 'AdminController@adminCreateDone');
 Route::get('/admin/adminDelete/{id}', 'AdminController@adminDelete');
 Route::post('/admin/adminDelete/done/{id}', 'AdminController@adminDeleteDone');
 
+//お客様一覧
+Route::get('/admin/customerList', 'AdminController@customerList');
+
+//お客様検索
+Route::get('admin/search', 'AdminController@search');
+Route::post('admin/search/done', 'AdminController@searchDone');
+
 //Event取得
 Route::get('/setEvent', 'EventController@setEvent');
