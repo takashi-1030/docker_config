@@ -34,6 +34,7 @@ Route::post('/admin/edit/done/{id}', 'AdminController@editDone');
 Route::get('/admin/add', 'AdminController@addReserve');
 Route::post('/admin/add', 'AdminController@reserveCheck');
 Route::post('/admin/add/done', 'AdminController@addDone');
+Route::get('/admin/delete/{id}', 'AdminController@delete');
 Route::get('/admin/confirm/{id}', 'AdminController@reserveConfirm');
 
 //管理者登録・削除・一覧画面

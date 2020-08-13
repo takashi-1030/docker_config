@@ -21,7 +21,9 @@
         <input type="hidden" name="date_str" value="{{ $r_info['date_str'] }}">
         <input type="hidden" name="number" value="{{ $r_info['number'] }}">
         <input type="hidden" name="time" value="{{ $r_info['time'] }}">
-        <input type="hidden" name="seat" value="{{ $r_info['seat'] }}">
+        @foreach($r_info['seat'] as $seat)
+            <input type="hidden" name="seat[]" value="{{ $seat }}">
+        @endforeach
         <input type="submit" value="確認" class="btn btn-primary">
         <input type="button" value="戻る" onclick=history.back() class="btn btn-secondary">
         </form>

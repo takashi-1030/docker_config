@@ -39,7 +39,7 @@
         <label>利用人数</label>
         <select name="number" class="form-control" style="width: 100px">
         <option disabled selected value>-</option>
-        @for($i = 1;$i <= 10;$i++)
+        @for($i = 1;$i <= 8;$i++)
         <option value="{{ $i }}">{{ $i }}名</option>
         @endfor
         </select>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reserve;
+use App\Models\ReserveSeat;
 use App\Models\Seat;
 use Validator;
 
@@ -57,8 +58,9 @@ class ReserveController extends Controller
         $reserve_record->date = $request->date_str;
         $reserve_record->time = $request->time;
         $reserve_record->number = $request->number;
-        $reserve_record->seat = $request->seat;
         $reserve_record->save();
+        $id = $reserve_record->id;
+        $create_reserve_seat = $this->create_reserve_seat($request,$id);
         $create_seat = $this->create_seat($request);
 
         return view('reserve/reserve_done');
@@ -80,10 +82,21 @@ class ReserveController extends Controller
         return $view;
     }
 
+    public function create_reserve_seat(Request $request,$id)
+    {
+        $seats = $request->seat;
+        foreach($seats as $seat){
+            $reserve_seat = new ReserveSeat;
+            $reserve_seat->seat = $seat;
+            $reserve_seat->reserve_id = $id;
+            $reserve_seat->save();
+        }
+    }
+
     public function create_seat(Request $request)
     {
         $date = $request->date_str;
-        $seat_number = $request->seat;
+        $reserve_seat = $request->seat;
         $start = $request->time;
         $plus30 = strtotime('+ 30 minute',strtotime($start));
         $plus60 = strtotime('+ 60 minute',strtotime($start));
@@ -97,110 +110,119 @@ class ReserveController extends Controller
         $margin1 = date('G:i',$minus30);
         $margin2 = date('G:i',$minus60);
         $margin3 = date('G:i',$minus90);
-        $start_record = Seat::where([
-            ['date',$date],
-            ['time',$start]
-        ])->first();
-        $while_record1 = Seat::where([
-            ['date',$date],
-            ['time',$while1]
-        ])->first();
-        $while_record2 = Seat::where([
-            ['date',$date],
-            ['time',$while2]
-        ])->first();
-        $end_record = Seat::where([
-            ['date',$date],
-            ['time',$end]
-        ])->first();
-        $margin_record1 = Seat::where([
-            ['date',$date],
-            ['time',$margin1]
-        ])->first();
-        $margin_record2 = Seat::where([
-            ['date',$date],
-            ['time',$margin2]
-        ])->first();
-        $margin_record3 = Seat::where([
-            ['date',$date],
-            ['time',$margin3]
-        ])->first();
 
-        if($start_record != null){
-            $start_record->$seat_number = '予約済';
-            $start_record->save();
-        } else {
-            $seat = new Seat;
-            $seat->date = $date;
-            $seat->time = $start;
-            $seat->$seat_number = '予約済';
-            $seat->save();
-        }
+        foreach($reserve_seat as $seat_number){
+            $start_record = Seat::where([
+                ['date',$date],
+                ['time',$start]
+            ])->first();
+            $while_record1 = Seat::where([
+                ['date',$date],
+                ['time',$while1]
+            ])->first();
+            $while_record2 = Seat::where([
+                ['date',$date],
+                ['time',$while2]
+            ])->first();
+            $end_record = Seat::where([
+                ['date',$date],
+                ['time',$end]
+            ])->first();
+            $margin_record1 = Seat::where([
+                ['date',$date],
+                ['time',$margin1]
+            ])->first();
+            $margin_record2 = Seat::where([
+                ['date',$date],
+                ['time',$margin2]
+            ])->first();
+            $margin_record3 = Seat::where([
+                ['date',$date],
+                ['time',$margin3]
+            ])->first();
 
-        if($while_record1 != null){
-            $while_record1->$seat_number = '予約済';
-            $while_record1->save();
-        } else {
-            $seat = new Seat;
-            $seat->date = $date;
-            $seat->time = $while1;
-            $seat->$seat_number = '予約済';
-            $seat->save();
-        }
+            if($start_record != null){
+                $start_record->$seat_number = '予約済';
+                $start_record->save();
+            } else {
+                $seat = new Seat;
+                $seat->date = $date;
+                $seat->time = $start;
+                $seat->$seat_number = '予約済';
+                $seat->save();
+            }
 
-        if($while_record2 != null){
-            $while_record2->$seat_number = '予約済';
-            $while_record2->save();
-        } else {
-            $seat = new Seat;
-            $seat->date = $date;
-            $seat->time = $while2;
-            $seat->$seat_number = '予約済';
-            $seat->save();
-        }
+            if($while_record1 != null){
+                $while_record1->$seat_number = '予約済';
+                $while_record1->save();
+            } else {
+                $seat = new Seat;
+                $seat->date = $date;
+                $seat->time = $while1;
+                $seat->$seat_number = '予約済';
+                $seat->save();
+            }
 
-        if($end_record != null){
-            $end_record->$seat_number = '予約済';
-            $end_record->save();
-        } else {
-            $seat = new Seat;
-            $seat->date = $date;
-            $seat->time = $end;
-            $seat->$seat_number = '予約済';
-            $seat->save();
-        }
+            if($while_record2 != null){
+                $while_record2->$seat_number = '予約済';
+                $while_record2->save();
+            } else {
+                $seat = new Seat;
+                $seat->date = $date;
+                $seat->time = $while2;
+                $seat->$seat_number = '予約済';
+                $seat->save();
+            }
 
-        if($margin_record1 != null){
-            $margin_record1->$seat_number = '予約不可';
-            $margin_record1->save();
-        } else {
-            $seat = new Seat;
-            $seat->date = $date;
-            $seat->time = $margin1;
-            $seat->$seat_number = '予約不可';
-            $seat->save();
-        }
+            if($end_record != null){
+                $end_record->$seat_number = '予約済';
+                $end_record->save();
+            } else {
+                $seat = new Seat;
+                $seat->date = $date;
+                $seat->time = $end;
+                $seat->$seat_number = '予約済';
+                $seat->save();
+            }
 
-        if($margin_record2 != null){
-            $margin_record2->$seat_number = '予約不可';
-            $margin_record2->save();
-        } else {
-            $seat = new Seat;
-            $seat->date = $date;
-            $seat->time = $margin2;
-            $seat->$seat_number = '予約不可';
-            $seat->save();
-        }
+            if($margin_record1 != null){
+                if($margin_record1->$seat_number == null){
+                    $margin_record1->$seat_number = '予約不可';
+                    $margin_record1->save();
+                }
+            } else {
+                $seat = new Seat;
+                $seat->date = $date;
+                $seat->time = $margin1;
+                $seat->$seat_number = '予約不可';
+                $seat->save();
+            }
 
-        if($margin_record3 != null){
-            $margin_record3->$seat_number = '予約不可';
-            $margin_record3->save();
-        } else {
-            $seat = new Seat;
-            $seat->date = $date;
-            $seat->time = $margin3;
-            $seat->$seat_number = '予約不可';
-            $seat->save();
+            if($margin_record2 != null){
+                if($margin_record2->$seat_number == null){
+                    $margin_record2->$seat_number = '予約不可';
+                    $margin_record2->save();
+                }
+            } else {
+                $seat = new Seat;
+                $seat->date = $date;
+                $seat->time = $margin2;
+                $seat->$seat_number = '予約不可';
+                $seat->save();
+            }
+
+            if($margin_record3 != null){
+                if($margin_record3->$seat_number == null){
+                    $margin_record3->$seat_number = '予約不可';
+                    $margin_record3->save();
+                }
+            } else {
+                $seat = new Seat;
+                $seat->date = $date;
+                $seat->time = $margin3;
+                $seat->$seat_number = '予約不可';
+                $seat->save();
+            }
         }
     }
 }

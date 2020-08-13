@@ -35,7 +35,10 @@
                     <li><span class="inactive-seat"></span>：選択不可</li>
                 </ul>
             </div>
-            <div class="select panel panel-default"><label class="panel-body">選択した座席 |</label></div>
+            <div id="select" class="select panel panel-default" data-total="0">
+                <label class="panel-body">選択した座席 |</label>
+            </div>
+            <div class="error"></div>
             <div class="floor-map">
                 <div class="seats">
                 <div class="x a_1">4</div>
@@ -58,10 +61,10 @@
         <input type="hidden" name="day" value="{{ $input['day'] }}">
         <input type="hidden" name="week" value="{{ $input['week'] }}">
         <input type="hidden" name="date_str" value="{{ $input['date_str'] }}" class="date">
-        <input type="hidden" name="number" value="{{ $input['number'] }}">
+        <input type="hidden" name="number" value="{{ $input['number'] }}" class="select-number">
         <input type="hidden" name="time" value="" class="time">
         <div class="select-seat"></div>
-        <input type="submit" value="お客様情報入力画面へ進む" class="btn btn-primary">
+        <input type="submit" value="お客様情報入力画面へ進む" class="btn btn-primary submit" disabled>
         <input type="button" value="戻る" onclick=history.back() class="btn btn-secondary">
         </form>
     </div>

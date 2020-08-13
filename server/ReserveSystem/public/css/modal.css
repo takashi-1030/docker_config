@@ -29,3 +29,7 @@
     transform: translate(-50%,-50%);
     width: 60%;
 }
+
+#checkbox {
+    margin-left: -1.25rem;
+}

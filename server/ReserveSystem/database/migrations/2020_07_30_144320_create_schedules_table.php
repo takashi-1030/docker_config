@@ -16,7 +16,6 @@ class CreateSchedulesTable extends Migration
         Schema::create('schedules', function (Blueprint $table) {
             $table->increments('id');
             $table->time('time');
-            $table->timestamps();
         });
     }
 

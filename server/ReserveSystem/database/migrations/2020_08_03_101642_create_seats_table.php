@@ -29,7 +29,6 @@ class CreateSeatsTable extends Migration
             $table->string('D-3')->nullable();;
             $table->string('D-4')->nullable();;
             $table->string('D-5')->nullable();;
-            $table->timestamps();
         });
     }
 
