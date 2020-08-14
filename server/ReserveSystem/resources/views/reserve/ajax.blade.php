@@ -23,7 +23,7 @@ $(function(){
         var seat = $(this).data('seat');
         var number = $(this).data('number');
         var type = $(this).data('type');
-        $(this).toggleClass('active');
+        $(this).toggleClass('selected');
         if($('.' + seat).length == 0){
             $('.select').append('<span class="selected-seat ' + seat + '" data-type="' + type + '">' + seat + ' </span>');
             $('.select-seat').append('<input type="hidden" name="seat[]" value="' + seat + '" class="input-' + seat + '">');

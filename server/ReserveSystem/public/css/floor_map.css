@@ -104,11 +104,11 @@ li {
     background-color: #1d648d;
 }
 
-.active {
+.selected {
     background-color: orange;
 }
 
-.active:hover {
+.selected:hover {
     background-color: rgb(200, 130, 0);
 }
 

@@ -19,7 +19,7 @@
     <div class="panel-body">
       <label>予約日時・座席番号</label>
       <table class="table">
-      <tr><td>日にち</td><td>{{ $date_str }}({{ $week_str[$week] }})</td></tr>
+      <tr><td style="width:40%">日にち</td><td>{{ $date_str }}({{ $week_str[$week] }})</td></tr>
       <tr><td>時間</td><td>{{ $time_str }}～</td></tr>
       <tr><td>利用人数</td><td>{{ $record['number'] }}名</td></tr>
       <tr>
@@ -33,7 +33,7 @@
       </table>
       <label>お客様情報</label>
       <table class="table">
-      <tr><td>お名前</td><td>{{ $record['name'] }}様</td></tr>
+      <tr><td style="width:40%">お名前</td><td>{{ $record['name'] }}様</td></tr>
       <tr><td>電話番号</td><td>{{ $record['tel'] }}</td></tr>
       <tr><td>メールアドレス</td><td>{{ $record['email'] }}</td></tr>
       </table>

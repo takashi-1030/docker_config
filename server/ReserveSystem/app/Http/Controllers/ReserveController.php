@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Reserve;
 use App\Models\ReserveSeat;
+use App\Models\Schedule;
 use App\Models\Seat;
 use Validator;
 
@@ -23,8 +24,12 @@ class ReserveController extends Controller
         $this->validate($request,$rule);
 
         $input = $request->all();
+        $schedule = Schedule::all();
 
-        return view('reserve/reserve_seat')->with('input',$input);
+        return view('reserve/reserve_seat')->with([
+            'input' => $input,
+            'schedule' => $schedule
+        ]);
     }
 
     public function postInfo(Request $request)

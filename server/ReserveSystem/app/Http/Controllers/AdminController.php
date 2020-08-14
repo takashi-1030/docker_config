@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\ReserveController;
 use App\Models\Reserve;
 use App\Models\ReserveSeat;
+use App\Models\Schedule;
 use App\Models\Seat;
 use App\Models\AdminUser;
 use Validator;
@@ -21,29 +23,25 @@ class AdminController extends Controller
     public function getReserve($id)
     {
         $record = Reserve::find($id);
-        $reserve_seat = ReserveSeat::where('reserve_id',$id)->get();
+        $reserve_seats = ReserveSeat::where('reserve_id',$id)->get();
 
         return view('admin/reserve')->with([
             'record' => $record,
-            'seats' => $reserve_seat
-            ]);
+            'seats' => $reserve_seats
+        ]);
     }
 
     public function reserveEdit($id)
     {
         $record = Reserve::find($id);
+        $reserve_seats = ReserveSeat::where('reserve_id',$id)->get();
+        $schedule = Schedule::all();
 
-        return view('admin/edit/edit')->with(
-            'input', [
-                'id' => $id,
-                'name' => $record->name,
-                'tel' => $record->tel,
-                'email' => $record->email,
-                'date' => $record->date,
-                'time' => $record->time,
-                'number' => $record->number,
-                'seat' => $record->seat,
-            ]);
+        return view('admin/edit/edit')->with([
+            'record' => $record,
+            'seats' => $reserve_seats,
+            'schedule' => $schedule
+        ]);
     }
 
     public function editCheck(Request $request,$id)
@@ -54,15 +52,19 @@ class AdminController extends Controller
 
     public function editDone(Request $request,$id)
     {
+        $reserve = new ReserveController;
         $reserve_record = Reserve::find($id);
-        $reserve_record->name = $request->name;
-        $reserve_record->tel = $request->tel;
-        $reserve_record->email = $request->email;
-        $reserve_record->date = $request->date;
+        $seats_record = ReserveSeat::where('reserve_id',$id)->get();
+        $delete_schedule = $this->deleteSchedule($reserve_record,$seats_record);
+        foreach($seats_record as $seat_record){
+            $seat_record->delete();
+        }
+        $reserve_record->date = $request->date_str;
         $reserve_record->time = $request->time;
         $reserve_record->number = $request->number;
-        $reserve_record->seat = $request->seat;
         $reserve_record->save();
+        $create_reserve_seat = $reserve->create_reserve_seat($request,$id);
+        $create_seat = $reserve->create_seat($request);
 
         return redirect()->action('AdminController@getIndex');
     }
@@ -70,8 +72,12 @@ class AdminController extends Controller
     public function addReserve(Request $request)
     {
         $date = $request->all();
+        $schedule = Schedule::all();
 
-        return view('admin/add/add')->with('date',$date);
+        return view('admin/add/add')->with([
+            'date' => $date,
+            'schedule' => $schedule
+        ]);
     }
 
     public function reserveCheck(Request $request)
@@ -82,15 +88,18 @@ class AdminController extends Controller
     }
     public function addDone(Request $request)
     {
+        $reserve = new ReserveController;
         $reserve_record = new Reserve;
         $reserve_record->name = $request->name;
         $reserve_record->tel = $request->tel;
-        $reserve_record->email = $request->email;
-        $reserve_record->date = $request->date;
+        $reserve_record->date = $request->date_str;
         $reserve_record->time = $request->time;
         $reserve_record->number = $request->number;
-        $reserve_record->seat = $request->seat;
+        $reserve_record->ok_flg = 'OK';
         $reserve_record->save();
+        $id = $reserve_record->id;
+        $create_reserve_seat = $reserve->create_reserve_seat($request,$id);
+        $create_seat = $reserve->create_seat($request);
 
         return redirect()->action('AdminController@getIndex');
     }
@@ -186,6 +195,126 @@ class AdminController extends Controller
 
         return redirect()->action('AdminController@getIndex');
     }
+
+    public function editAjax(Request $request)
+    {
+        $date = $request->date;
+        $old_date = $request->old_date;
+        $time = $request->time;
+        $seats = $request->seat;
+        $after_seats = $request->after_seats;
+        if(empty($after_seats)){
+            $after_seats = array();
+        }
+
+        $result = Seat::where([
+            ['date',$date],
+            ['time',$time]
+        ])->first();
+
+        $start = $request->old_time;
+        $plus30 = strtotime('+ 30 minute',strtotime($start));
+        $plus60 = strtotime('+ 60 minute',strtotime($start));
+        $plus90 = strtotime('+ 90 minute',strtotime($start));
+        $plus120 = strtotime('+ 120 minute',strtotime($start));
+        $minus30 = strtotime('- 30 minute',strtotime($start));
+        $minus60 = strtotime('- 60 minute',strtotime($start));
+        $minus90 = strtotime('- 90 minute',strtotime($start));
+        $while1 = date('G:i',$plus30);
+        $while2 = date('G:i',$plus60);
+        $end = date('G:i',$plus90);
+        $end_after = date('G:i',$plus120);
+        $margin1 = date('G:i',$minus30);
+        $margin2 = date('G:i',$minus60);
+        $margin3 = date('G:i',$minus90);
+        $start_record = Seat::where([
+            ['date',$date],
+            ['time',$start]
+        ])->first();
+        $while_record1 = Seat::where([
+            ['date',$date],
+            ['time',$while1]
+        ])->first();
+        $while_record2 = Seat::where([
+            ['date',$date],
+            ['time',$while2]
+        ])->first();
+        $end_record = Seat::where([
+            ['date',$date],
+            ['time',$end]
+        ])->first();
+        $end_after_record = Seat::where([
+            ['date',$date],
+            ['time',$end_after]
+        ])->first();
+        $margin_record1 = Seat::where([
+            ['date',$date],
+            ['time',$margin1]
+        ])->first();
+        $margin_record2 = Seat::where([
+            ['date',$date],
+            ['time',$margin2]
+        ])->first();
+        $margin_record3 = Seat::where([
+            ['date',$date],
+            ['time',$margin3]
+        ])->first();
+
+        foreach($seats as $seat){
+            if($start_record->$seat == '予約済'){
+                $old_times[] = $start_record->time;
+            }
+            if($end_after_record->$seat != '予約済'){
+                if($while_record1->$seat == '予約済'){
+                    $old_times[] = $while_record1->time;
+                }
+                if($while_record2->$seat == '予約済'){
+                    $old_times[] = $while_record2->time;
+                }
+                if($end_record->$seat == '予約済'){
+                    $old_times[] = $end_record->time;
+                }
+            }
+            if($margin_record1->$seat == '予約不可'){
+                $old_times[] = $margin_record1->time;
+            }
+            if($margin_record2->$seat == '予約不可'){
+                $old_times[] = $margin_record2->time;
+            }
+            if($margin_record3->$seat == '予約不可'){
+                $old_times[] = $margin_record3->time;
+            }
+            $old_times_array[$seat] = $old_times;
+        }
+
+        $view = view('admin/edit/ajax')->with([
+            'result' => $result,
+            'seats' => $seats,
+            'after_seats' => $after_seats,
+            'old_date' => $old_date,
+            'old_times' => $old_times_array
+        ]);
+        $view = $view->render();
+
+        return $view;
+    }
+
+    public function addAjax(Request $request)
+    {
+        $date = $request->date;
+        $time = $request->time;
+
+        $result = Seat::where([
+            ['date',$date],
+            ['time',$time]
+        ])->first();
+
+        $view = view('admin/add/ajax')->with('result',$result);
+        $view = $view->render();
+
+        return $view;
+    }
+
 //管理者ログイン
     public function adminGetIndex()
     {
@@ -199,12 +328,8 @@ class AdminController extends Controller
 //管理者登録・削除・一覧画面
     public function adminList()
     {
-        try {
-            $db_result = AdminUser::all();
-            return view('admin/list/adminList')->with('adminList', $db_result);
-        } catch (Exception $e) {
-            return view('error');
-        }
+        $db_result = AdminUser::all();
+        return view('admin/list/adminList')->with('adminList', $db_result);
     }
 
     public function adminCreate()
@@ -237,52 +362,36 @@ class AdminController extends Controller
 
     public function adminCreateDone(Request $request)
     {
-        try {
-            $admin_record = new AdminUser;
-            $admin_record->admin_id = $request->admin_id;
-            $admin_record->name = $request->name;
-            $admin_record->password = $request->password;
-            $admin_record->tel = $request->tel;
-            $admin_record->email = $request->email;
-            $admin_record->save();
+        $admin_record = new AdminUser;
+        $admin_record->admin_id = $request->admin_id;
+        $admin_record->name = $request->name;
+        $admin_record->password = $request->password;
+        $admin_record->tel = $request->tel;
+        $admin_record->email = $request->email;
+        $admin_record->save();
 
             return redirect()->action('AdminController@adminList');
-        } catch (Exception $e) {
-            return view('error');
-        }
     }
 
     public function adminDelete($id)
     {
-        try {
-            $disp_data = AdminUser::find($id);
-            return view('Admin/adminDelete/check')->with('data', $disp_data);
-        } catch (Exception $e) {
-            return view('error');
-        }
+        $disp_data = AdminUser::find($id);
+        return view('Admin/adminDelete/check')->with('data', $disp_data);
     }
 
     public function adminDeleteDone($id)
     {
-        try {
-            $delete_user = AdminUser::find($id);
-            $delete_user->delete();
-            return redirect()->action('AdminController@adminList');
-        } catch (Exception $e) {
-            return view('error');
-        }
+        $delete_user = AdminUser::find($id);
+        $delete_user->delete();
+        return redirect()->action('AdminController@adminList');
     }
-    
+
     //お客様一覧
-    
+
     public function customerList()
     {
-        try{
-            $customer = Reserve::select('name','tel','email')->distinct()->get();
-            return view('admin/customer/customerList')->with('customerList', $customer);
-        } catch (Exception $e) {
-            return view('error');
-        }
+        $customer = Reserve::select('name','tel','email')->distinct()->get();
+        return view('admin/customer/customerList')->with('customerList', $customer);
     }
     //検索
 
@@ -304,7 +413,7 @@ class AdminController extends Controller
         if(!empty($name)){
             $query->where('name','like','%'.$name.'%')->get();
         }
-        
+
         $record = $query->get();
 
         return view('admin/search/done')->with('record',$record);

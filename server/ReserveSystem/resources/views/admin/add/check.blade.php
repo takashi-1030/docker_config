@@ -30,7 +30,11 @@
                 </tr>
                 <tr>
                 <td>座席</td>
-                <td>{{ $input['seat'] }}</td>
+                <td>
+                @foreach($input['seat'] as $seat)
+                    {{ $seat }}　
+                @endforeach
+                </td>
                 </tr>
             </table>
             <label>お客様情報</label>
@@ -43,18 +47,16 @@
                 <td>{{ $input['tel'] }}</td>
                 </tr>
                 <tr>
-                <td>メールアドレス</td>
-                <td>{{ $input['email'] }}</td>
-                </tr>
             </table>
         </div>
         <input type="hidden" name="name" value="{{ $input['name'] }}">
         <input type="hidden" name="tel" value="{{ $input['tel'] }}">
-        <input type="hidden" name="email" value="{{ $input['email'] }}">
-        <input type="hidden" name="date" value="{{ $input['date'] }}">
+        <input type="hidden" name="date_str" value="{{ $input['date'] }}">
         <input type="hidden" name="time" value="{{ $input['time'] }}">
         <input type="hidden" name="number" value="{{ $input['number'] }}">
-        <input type="hidden" name="seat" value="{{ $input['seat'] }}">
+        @foreach($input['seat'] as $seat)
+            <input type="hidden" name="seat[]" value="{{ $seat }}">
+        @endforeach
         <input type="submit" value="予約追加" class="btn btn-primary">
         <input type="button" value="戻る" onclick=history.back() class="btn btn-secondary">
         </form>

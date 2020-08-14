@@ -30,7 +30,7 @@
                     <a class="nav-link" href="/admin/customerList">お客様一覧</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/admin/search">お客様検索</a>
+                    <a class="nav-link" href="/admin/search">検索</a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="">設定</a>

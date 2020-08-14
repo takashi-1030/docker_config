@@ -10,7 +10,7 @@
             <label>予約日時・座席番号</label>
             <table class="table">
                 <tr>
-                <td>日にち</td>
+                <td style="width:40%">日にち</td>
                 <td>{{ $info['year'] }}年{{ $info['month'] }}月{{ $info['day'] }}日({{ $info['week'] }})</td>
                 </tr>
                 <tr>
@@ -33,7 +33,7 @@
             <label>お客様情報</label>
             <table class="table">
                 <tr>
-                <td>お名前</td>
+                <td style="width:40%">お名前</td>
                 <td>{{ $info['name'] }}</td>
                 </tr>
                 <tr>

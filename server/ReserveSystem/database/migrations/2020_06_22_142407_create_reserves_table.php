@@ -17,7 +17,7 @@ class CreateReservesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('tel');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->date('date');
             $table->time('time');
             $table->integer('number');

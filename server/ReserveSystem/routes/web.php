@@ -18,9 +18,6 @@ Route::post('/guest_info', 'ReserveController@postInfo');
 Route::post('/check', 'ReserveController@reserveCheck');
 Route::post('/reserve_done', 'ReserveController@reserveDone');
 
-//ajax
-Route::get('/seat', 'ReserveController@ajax');
-
 //管理者ログイン
 Route::get('/admin/login', 'AdminController@adminGetIndex');
 Route::post('/admin/login', 'AdminController@adminPostIndex');
@@ -51,6 +48,11 @@ Route::get('/admin/customerList', 'AdminController@customerList');
 //お客様検索
 Route::get('admin/search', 'AdminController@search');
 Route::post('admin/search/done', 'AdminController@searchDone');
+
+//ajax
+Route::get('/seat', 'ReserveController@ajax');
+Route::get('admin/seat', 'AdminController@editAjax');
+Route::get('admin/add/seat', 'AdminController@addAjax');
 
 //Event取得
 Route::get('/setEvent', 'EventController@setEvent');

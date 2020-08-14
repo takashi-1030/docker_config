@@ -20,10 +20,9 @@
         <div class="form-group">
             <label>「予約時間」の選択</label>
             <div class="slick" data-slick='{"slidesToShow": 7, "slidesToScroll": 1}'>
-            @for($i = 16;$i <= 21;$i++)
-                <div class="btn-carousel" data-time="{{ $i }}:00">{{ $i }}:00～</div>
-                <div class="btn-carousel" data-time="{{ $i }}:30">{{ $i }}:30～</div>
-            @endfor
+            @foreach($schedule as $time)
+                <div class="btn-carousel" data-time="{{ date('G:i',strtotime($time['time'])) }}">{{ date('G:i',strtotime($time['time'])) }}～</div>
+            @endforeach
             </div>
         </div>
         <div class="form-group">
@@ -93,6 +92,9 @@ function dispLoading(msg){
 $(function(){
     $('.btn-carousel').on('click',function(){
         dispLoading();
+        $('#select').children('span').remove();
+        $('.select-seat').children().remove();
+        $('.alert').remove();
         var date = $('.date').val();
         var time = $(this).data('time');
         $('.btn-carousel').css('background-color','#3097D1');

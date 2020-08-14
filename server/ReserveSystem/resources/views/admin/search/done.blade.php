@@ -5,14 +5,13 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <table class="table">
-            <tr><th>予約日</th><th>予約時間</th><th>お客様氏名</th><th>電話番号</th><th>メールアドレス</th></tr>
+            <tr><th>予約日</th><th>予約時間</th><th>お客様氏名</th><th></th></tr>
             @foreach($record as $item)
             <tr>
                 <td>{{ $item['date'] }}</td>
-                <td>{{ $item['time'] }}</td>
+                <td>{{ date('G:i',strtotime($item['time'])) }}～</td>
                 <td>{{ $item['name'] }}</td>
-                <td>{{ $item['tel'] }}</td>
-                <td>{{ $item['email'] }}</td>
+                <td><a class="btn btn-primary" role="button" href="/admin/reserve/{{ $item['id'] }}">詳細を見る</a></td>
             </tr>
             @endforeach
         </table>
