@@ -33,7 +33,7 @@
 <div class="modal js-modal">
     <div class="modal__bg js-modal-close"></div>
     <div class="modal__content">
-      <form action="/reserve_seat" method="post">
+      <form action="/reserve_seat" method="get">
         {{ csrf_field() }}
         <div class="modal_head"></div>
         <label>利用人数</label>

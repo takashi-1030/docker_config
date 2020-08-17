@@ -39,6 +39,7 @@
       </table>
       @if($record['ok_flg'] == null)
       <a class="btn btn-primary" role="button" href="/admin/confirm/{{ $record['id'] }}">予約を確定する</a>
+      <a class="btn btn-danger" role="button" href="/admin/reject/{{ $record['id'] }}">予約を拒否する</a>
       @else
       <a class="btn btn-success" role="button" href="/admin/edit/{{ $record['id'] }}">予約内容を変更する</a>
       <button id="delete" class="btn btn-danger">予約を取り消す</button>

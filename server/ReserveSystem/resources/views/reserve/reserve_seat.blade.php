@@ -15,7 +15,7 @@
         <b>{{ $input['year'] }}年{{ $input['month'] }}月{{ $input['day'] }}日({{ $input['week'] }})</b>
     </div>
     <div class="panel-body">
-        <form action="/guest_info" method="post">
+        <form action="/guest_info" method="get">
         {{ csrf_field() }}
         <div class="form-group">
             <label>「予約時間」の選択</label>

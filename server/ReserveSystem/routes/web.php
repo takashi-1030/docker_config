@@ -13,8 +13,8 @@
 
 //ユーザー閲覧画面
 Route::get('/', 'ReserveController@reserveTop');
-Route::post('/reserve_seat', 'ReserveController@reserveSeat');
-Route::post('/guest_info', 'ReserveController@postInfo');
+Route::get('/reserve_seat', 'ReserveController@reserveSeat');
+Route::get('/guest_info', 'ReserveController@postInfo');
 Route::post('/check', 'ReserveController@reserveCheck');
 Route::post('/reserve_done', 'ReserveController@reserveDone');
 
@@ -33,6 +33,9 @@ Route::post('/admin/add', 'AdminController@reserveCheck');
 Route::post('/admin/add/done', 'AdminController@addDone');
 Route::get('/admin/delete/{id}', 'AdminController@delete');
 Route::get('/admin/confirm/{id}', 'AdminController@reserveConfirm');
+Route::get('/admin/reject/{id}', 'AdminController@reserveReject');
+Route::get('/admin/config', 'AdminController@config');
+Route::post('/admin/config/time', 'AdminController@configTime');
 
 //管理者登録・削除・一覧画面
 Route::get('/admin/list', 'AdminController@adminList');

@@ -22,11 +22,20 @@
         <b>{{ $date_str }}({{ $week_str[$week] }})</b>
     </div>
     <div class="panel-body">
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+        </div>
+        @endif
         <form action="/admin/add" method="post">
         {{ csrf_field() }}
         <div class="form-group">
             <label>利用人数</label>
-            <input type="text" name="number" style="width:100px" class="form-control">
+            <input type="text" name="number" style="width:100px" class="form-control @if(!empty($errors->first('number')))border-danger @endif" value="{{ old('number') }}">
         </div>
         <div class="form-group">
             <label>「予約時間」の選択</label>
@@ -67,11 +76,11 @@
         </div>
         <div class="form-group">
             <label>お名前</label>
-            <input type="text" name="name" class="form-control">
+            <input type="text" name="name" class="form-control @if(!empty($errors->first('name')))border-danger @endif" value="{{ old('name') }}">
         </div>
         <div class="form-group">
             <label>電話番号</label>
-            <input type="text" name="tel" class="form-control">
+            <input type="text" name="tel" class="form-control @if(!empty($errors->first('tel')))border-danger @endif" value="{{ old('tel') }}">
         </div>
         <input type="hidden" name="date" value="{{ $date['date'] }}" class="date">
         <input type="hidden" name="time" value="" class="time">

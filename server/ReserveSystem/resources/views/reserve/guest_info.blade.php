@@ -4,15 +4,24 @@
 <h2>お客様情報入力</h2>
 <div class="panel panel-default">
     <div class="panel-body">
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+        </div>
+        @endif
         <form action="/check" method="post">
         {{ csrf_field() }}
         <div class="form-group">
             <label>お名前</label>
-            <input type="text" name="name" class="form-control"><br>
+            <input type="text" name="name" class="form-control @if(!empty($errors->first('name')))border-danger @endif" value="{{ old('name') }}"><br>
             <label>電話番号</label>
-            <input type="text" name="tel" class="form-control"><br>
+            <input type="text" name="tel" class="form-control @if(!empty($errors->first('tel')))border-danger @endif" value="{{ old('tel') }}"><br>
             <label>メールアドレス</label>
-            <input type="text" name="email" class="form-control"><br>
+            <input type="text" name="email" class="form-control @if(!empty($errors->first('email')))border-danger @endif" value="{{ old('email') }}"><br>
         </div>
         <input type="hidden" name="year" value="{{ $r_info['year'] }}">
         <input type="hidden" name="month" value="{{ $r_info['month'] }}">

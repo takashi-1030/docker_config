@@ -26,7 +26,11 @@
 @endif
 
 <label>予約カレンダー</label>
-<div id='calendar'></div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div id='calendar'></div>
+    </div>
+</div>
 
 <div class="modal date-modal">
     <div class="modal__bg js-modal-close"></div>

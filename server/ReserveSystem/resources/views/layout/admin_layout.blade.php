@@ -33,7 +33,7 @@
                     <a class="nav-link" href="/admin/search">検索</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="">設定</a>
+                    <a class="nav-link" href="/admin/config">設定</a>
                 </li>
             </ul>
         </div>

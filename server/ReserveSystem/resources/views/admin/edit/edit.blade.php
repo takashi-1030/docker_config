@@ -14,6 +14,15 @@
 <h2>予約内容変更</h2>
 <div class="panel panel-default">
     <div class="panel-body">
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+        </div>
+        @endif
         <form action="/admin/edit/{{ $record['id'] }}" method="post">
         {{ csrf_field() }}
         <div class="form-group">
@@ -22,7 +31,7 @@
         </div>
         <div class="form-group">
             <label>利用人数</label>
-            <input type="text" name="number" value="{{ $record['number'] }}" style="width:100px" class="form-control">
+            <input type="text" name="number" value="{{ $record['number'] }}" style="width:100px" class="form-control @if(!empty($errors->first('number')))border-danger @endif">
         </div>
         <div class="form-group">
             <label>「予約時間」の選択</label>
@@ -81,6 +90,9 @@
             <input type="hidden" name="seat[]" value="{{ $seat['seat'] }}" class="input-{{ $seat['seat'] }}">
             @endforeach
         </div>
+        @foreach($seats as $seat)
+        <input type="hidden" name="old_seat[]" value="{{ $seat['seat'] }}">
+        @endforeach
         <input type="submit" value="お客様情報入力画面へ進む" class="btn btn-primary submit">
         <input type="button" value="戻る" onclick=history.back() class="btn btn-secondary">
         </form>

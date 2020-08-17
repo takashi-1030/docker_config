@@ -58,6 +58,9 @@
         @foreach($input['seat'] as $seat)
         <input type="hidden" name="seat[]" value="{{ $seat }}">
         @endforeach
+        @foreach($input['old_seat'] as $old_seat)
+        <input type="hidden" name="old_seat[]" value="{{ $old_seat }}">
+        @endforeach
         <input type="submit" value="変更" class="btn btn-primary">
         <input type="button" value="戻る" onclick=history.back() class="btn btn-secondary">
         </form>

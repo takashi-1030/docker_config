@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\SendMailController;
 use App\Models\Reserve;
 use App\Models\ReserveSeat;
 use App\Models\Schedule;
@@ -18,13 +19,17 @@ class ReserveController extends Controller
 
     public function reserveSeat(Request $request)
     {
-        $rule = [
-            'number' => 'required'
-        ];
-        $this->validate($request,$rule);
 
         $input = $request->all();
         $schedule = Schedule::all();
+
+        $rule = [
+            'number' => 'required'
+        ];
+        $error_msg = [
+            'required' => '人数を選択して下さい。'
+        ];
+        Validator::make($input,$rule,$error_msg)->validate();
 
         return view('reserve/reserve_seat')->with([
             'input' => $input,
@@ -34,14 +39,6 @@ class ReserveController extends Controller
 
     public function postInfo(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'seat' => 'required'
-        ]);
-        if($validator->fails()) {
-            $test = $this->reserveSeat($request);
-            return $test;
-        }
-
         $r_info = $request->all();
 
         return view('reserve/guest_info')->with('r_info',$r_info);
@@ -51,24 +48,56 @@ class ReserveController extends Controller
     {
         $info = $request->all();
 
+        $rules = [
+            'name' => 'required|string',
+            'tel' => 'required|numeric',
+            'email' => 'required|email',
+        ];
+        Validator::make($info,$rules)->validate();
+
         return view('reserve/check')->with('info',$info);
     }
 
     public function reserveDone(Request $request)
     {
-        $reserve_record = new Reserve;
-        $reserve_record->name = $request->name;
-        $reserve_record->tel = $request->tel;
-        $reserve_record->email = $request->email;
-        $reserve_record->date = $request->date_str;
-        $reserve_record->time = $request->time;
-        $reserve_record->number = $request->number;
-        $reserve_record->save();
-        $id = $reserve_record->id;
-        $create_reserve_seat = $this->create_reserve_seat($request,$id);
-        $create_seat = $this->create_seat($request);
+        $request->session()->regenerateToken();
 
-        return view('reserve/reserve_done');
+        $reserve_check = Seat::where([
+            ['date',$request->date_str],
+            ['time',$request->time]
+        ])->first();
+        $seats = $request->seat;
+        if($reserve_check == NULL){
+            $reserve_check_array = array();
+        } else {
+            foreach($seats as $seat){
+                $reserve_check_array[] = $reserve_check->$seat;
+            }
+        }
+
+        if(in_array('予約済',$reserve_check_array) || in_array('予約不可',$reserve_check_array)){
+            return view('error/guest_reserve_error');
+        } else {
+            $date = $request->date_str;
+            $start = $request->time;
+            $reserve_seat = $request->seat;
+
+            $reserve_record = new Reserve;
+            $reserve_record->name = $request->name;
+            $reserve_record->tel = $request->tel;
+            $reserve_record->email = $request->email;
+            $reserve_record->date = $date;
+            $reserve_record->time = $start;
+            $reserve_record->number = $request->number;
+            $reserve_record->save();
+            $id = $reserve_record->id;
+            $create_reserve_seat = $this->create_reserve_seat($request,$id);
+            $create_seat = $this->create_seat($date,$start,$reserve_seat);
+            $send_mail = new SendMailController;
+            $send_mail_create = $send_mail->notification($request);
+
+            return view('reserve/reserve_done');
+        }
     }
 
     public function ajax(Request $request)
@@ -98,11 +127,8 @@ class ReserveController extends Controller
         }
     }
 
-    public function create_seat(Request $request)
+    public function create_seat($date,$start,$reserve_seat)
     {
-        $date = $request->date_str;
-        $reserve_seat = $request->seat;
-        $start = $request->time;
         $plus30 = strtotime('+ 30 minute',strtotime($start));
         $plus60 = strtotime('+ 60 minute',strtotime($start));
         $plus90 = strtotime('+ 90 minute',strtotime($start));

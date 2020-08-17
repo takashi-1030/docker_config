@@ -9,7 +9,7 @@
     padding-left: 10px;
 }
 
-li {
+.description li {
     display: inline;
     margin-right: 15px;
 }

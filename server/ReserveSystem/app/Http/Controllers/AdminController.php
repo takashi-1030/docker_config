@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\ReserveController;
+use App\Http\Controllers\SendMailController;
 use App\Models\Reserve;
 use App\Models\ReserveSeat;
 use App\Models\Schedule;
@@ -47,26 +48,64 @@ class AdminController extends Controller
     public function editCheck(Request $request,$id)
     {
         $input = $request->all() + ['id' => $id];
+
+        $rule = [
+            'number' => 'required|numeric',
+        ];
+        Validator::make($input,$rule)->validate();
+
         return view('admin/edit/check')->with('input',$input);
     }
 
     public function editDone(Request $request,$id)
     {
+        $request->session()->regenerateToken();
         $reserve = new ReserveController;
         $reserve_record = Reserve::find($id);
         $seats_record = ReserveSeat::where('reserve_id',$id)->get();
         $delete_schedule = $this->deleteSchedule($reserve_record,$seats_record);
-        foreach($seats_record as $seat_record){
-            $seat_record->delete();
-        }
-        $reserve_record->date = $request->date_str;
-        $reserve_record->time = $request->time;
-        $reserve_record->number = $request->number;
-        $reserve_record->save();
-        $create_reserve_seat = $reserve->create_reserve_seat($request,$id);
-        $create_seat = $reserve->create_seat($request);
 
-        return redirect()->action('AdminController@getIndex');
+        $reserve_check = Seat::where([
+            ['date',$request->date_str],
+            ['time',$request->time]
+        ])->first();
+        $seats = $request->seat;
+        if($reserve_check == NULL){
+            $reserve_check_array = array();
+        } else {
+            foreach($seats as $seat){
+                $reserve_check_array[] = $reserve_check->$seat;
+            }
+        }
+
+        if(in_array('予約済',$reserve_check_array) || in_array('予約不可',$reserve_check_array)){
+            $date = $reserve_record->date;
+            $start = $reserve_record->time;
+            $reserve_seat = $request->old_seat;
+            $create_seat = $reserve->create_seat($date,$start,$reserve_seat);
+
+            return view('error/admin_reserve_error');
+        } else {
+            $name = $reserve_record->name;
+            $date = $request->date_str;
+            $start = $request->time;
+            $reserve_seat = $request->seat;
+            foreach($seats_record as $seat_record){
+                $seat_record->delete();
+            }
+            $reserve_record->date = $date;
+            $reserve_record->time = $start;
+            $reserve_record->number = $request->number;
+            $reserve_record->save();
+            $create_reserve_seat = $reserve->create_reserve_seat($request,$id);
+            $create_seat = $reserve->create_seat($date,$start,$reserve_seat);
+            if($reserve_record->email != NULL){
+                $send_mail = new SendMailController;
+                $send_mail_create = $send_mail->editNotification($request,$name);
+            }
+
+            return redirect()->action('AdminController@getIndex');
+        }
     }
 
     public function addReserve(Request $request)
@@ -84,24 +123,54 @@ class AdminController extends Controller
     {
         $input = $request->all();
 
+        $rules = [
+            'name' => 'required|string',
+            'tel' => 'required|numeric',
+            'number' => 'required|numeric',
+        ];
+        Validator::make($input,$rules)->validate();
+
         return view('admin/add/check')->with('input',$input);
     }
     public function addDone(Request $request)
     {
-        $reserve = new ReserveController;
-        $reserve_record = new Reserve;
-        $reserve_record->name = $request->name;
-        $reserve_record->tel = $request->tel;
-        $reserve_record->date = $request->date_str;
-        $reserve_record->time = $request->time;
-        $reserve_record->number = $request->number;
-        $reserve_record->ok_flg = 'OK';
-        $reserve_record->save();
-        $id = $reserve_record->id;
-        $create_reserve_seat = $reserve->create_reserve_seat($request,$id);
-        $create_seat = $reserve->create_seat($request);
+        $request->session()->regenerateToken();
 
-        return redirect()->action('AdminController@getIndex');
+        $reserve_check = Seat::where([
+            ['date',$request->date_str],
+            ['time',$request->time]
+        ])->first();
+        $seats = $request->seat;
+        if($reserve_check == NULL){
+            $reserve_check_array = array();
+        } else {
+            foreach($seats as $seat){
+                $reserve_check_array[] = $reserve_check->$seat;
+            }
+        }
+
+        if(in_array('予約済',$reserve_check_array) || in_array('予約不可',$reserve_check_array)){
+            return view('error/admin_reserve_error');
+        } else {
+            $date = $request->date_str;
+            $start = $request->time;
+            $reserve_seat = $request->seat;
+
+            $reserve = new ReserveController;
+            $reserve_record = new Reserve;
+            $reserve_record->name = $request->name;
+            $reserve_record->tel = $request->tel;
+            $reserve_record->date = $date;
+            $reserve_record->time = $start;
+            $reserve_record->number = $request->number;
+            $reserve_record->ok_flg = 'OK';
+            $reserve_record->save();
+            $id = $reserve_record->id;
+            $create_reserve_seat = $reserve->create_reserve_seat($request,$id);
+            $create_seat = $reserve->create_seat($date,$start,$reserve_seat);
+
+            return redirect()->action('AdminController@getIndex');
+        }
     }
 
     public function delete($id)
@@ -192,8 +261,60 @@ class AdminController extends Controller
         $reserve_record = Reserve::find($id);
         $reserve_record->ok_flg = 'OK';
         $reserve_record->save();
+        $send_mail = new SendMailController;
+        $send_mail_create = $send_mail->confirmNotification($reserve_record);
 
         return redirect()->action('AdminController@getIndex');
+    }
+
+    public function reserveReject($id)
+    {
+        $reserve_record = Reserve::find($id);
+        $seats_record = ReserveSeat::where('reserve_id',$id)->get();
+        $delete_schedule = $this->deleteSchedule($reserve_record,$seats_record);
+        $send_mail = new SendMailController;
+        $send_mail_create = $send_mail->rejectNotification($reserve_record);
+        $reserve_record->delete();
+
+        return redirect()->action('AdminController@getIndex');
+    }
+
+    public function config()
+    {
+        return view('admin/config');
+    }
+
+    public function configTime(Request $request)
+    {
+        $input = $request->all();
+
+        $rules = [
+            'start_g' => 'required',
+            'start_i' => 'required',
+            'end_g' => 'required',
+            'end_i' => 'required',
+        ];
+        Validator::make($input,$rules)->validate();
+
+        $start_time = $request->start_g.':'.$request->start_i;
+        $end_time = $request->end_g.':'.$request->end_i;
+        $start = date('G:i',strtotime($start_time));
+        $end = date('G:i',strtotime($end_time));
+
+        $schedule = Schedule::all();
+        foreach($schedule as $time){
+            $time->delete();
+        }
+
+        while($end >= $start){
+            $new_schedule = new Schedule;
+            $new_schedule->time = $start;
+            $new_schedule->save();
+            $plus30 = strtotime('+ 30 minute',strtotime($start));
+            $start = date('G:i',$plus30);
+        }
+
+        return redirect()->action('AdminController@config');
     }
 
     public function editAjax(Request $request)
@@ -264,7 +385,17 @@ class AdminController extends Controller
             if($start_record->$seat == '予約済'){
                 $old_times[] = $start_record->time;
             }
-            if($end_after_record->$seat != '予約済'){
+            if(empty($end_after_record)){
+                if($while_record1->$seat == '予約済'){
+                    $old_times[] = $while_record1->time;
+                }
+                if($while_record2->$seat == '予約済'){
+                    $old_times[] = $while_record2->time;
+                }
+                if($end_record->$seat == '予約済'){
+                    $old_times[] = $end_record->time;
+                }
+            } elseif($end_after_record->$seat != '予約済'){
                 if($while_record1->$seat == '予約済'){
                     $old_times[] = $while_record1->time;
                 }
