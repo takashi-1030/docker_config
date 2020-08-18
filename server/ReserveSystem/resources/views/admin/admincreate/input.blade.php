@@ -1,6 +1,6 @@
 @extends('layout/admin_layout')
 @section('content')
-<form method="post" action="/admin/adminCreate">
+<form method="post" action="/admin/admincreate">
     <h2>管理者登録</h2>
     {{ csrf_field() }}
     <label>管理者ID</label>

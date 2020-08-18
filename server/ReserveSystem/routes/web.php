@@ -39,11 +39,11 @@ Route::post('/admin/config/time', 'AdminController@configTime');
 
 //管理者登録・削除・一覧画面
 Route::get('/admin/list', 'AdminController@adminList');
-Route::get('/admin/adminCreate', 'AdminController@adminCreate');
-Route::post('/admin/adminCreate', 'AdminController@adminCreateCheck');
-Route::post('/admin/adminCreate/done', 'AdminController@adminCreateDone');
-Route::get('/admin/adminDelete/{id}', 'AdminController@adminDelete');
-Route::post('/admin/adminDelete/done/{id}', 'AdminController@adminDeleteDone');
+Route::get('/admin/admincreate', 'AdminController@adminCreate');
+Route::post('/admin/admincreate', 'AdminController@adminCreateCheck');
+Route::post('/admin/admincreate/done', 'AdminController@adminCreateDone');
+Route::get('/admin/admindelete/{id}', 'AdminController@adminDelete');
+Route::post('/admin/admindelete/done/{id}', 'AdminController@adminDeleteDone');
 
 //お客様一覧
 Route::get('/admin/customerList', 'AdminController@customerList');

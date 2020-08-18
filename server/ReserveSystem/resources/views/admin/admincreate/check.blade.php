@@ -1,6 +1,6 @@
 @extends('layout/admin_layout')
 @section('content')
-<form method="post" action="/admin/adminCreate/done" id="create_form">
+<form method="post" action="/admin/admincreate/done" id="create_form">
     <h2>管理者登録</h2>
     @if ($errors->any())
     <div class="alert alert-danger">

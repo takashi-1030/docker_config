@@ -3,7 +3,7 @@
 <h2 class="d-inline-block">お客様一覧</h2>
 <div class="panel panel-default">
     <div class="panel-body">
-        @if (isset($customerList))
+        @if (isset($customerlist))
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach ($customerList as $item)
+            @foreach ($customerlist as $item)
             <tr>
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->tel }}</td>

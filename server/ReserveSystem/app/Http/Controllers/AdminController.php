@@ -460,12 +460,12 @@ class AdminController extends Controller
     public function adminList()
     {
         $db_result = AdminUser::all();
-        return view('admin/list/adminList')->with('adminList', $db_result);
+        return view('admin/list/adminlist')->with('adminlist', $db_result);
     }
 
     public function adminCreate()
     {
-        return view('admin/adminCreate/input');
+        return view('admin/admincreate/input');
     }
 
     public function adminCreateCheck(Request $request)
@@ -488,7 +488,7 @@ class AdminController extends Controller
 
         $this->validate($request, $rules);
 
-        return view('admin/adminCreate/check')->with('input', $request->all());
+        return view('admin/admincreate/check')->with('input', $request->all());
     }
 
     public function adminCreateDone(Request $request)
@@ -507,7 +507,7 @@ class AdminController extends Controller
     public function adminDelete($id)
     {
         $disp_data = AdminUser::find($id);
-        return view('Admin/adminDelete/check')->with('data', $disp_data);
+        return view('Admin/admindelete/check')->with('data', $disp_data);
     }
 
     public function adminDeleteDone($id)
@@ -522,7 +522,7 @@ class AdminController extends Controller
     public function customerList()
     {
         $customer = Reserve::select('name','tel','email')->distinct()->get();
-        return view('admin/customer/customerList')->with('customerList', $customer);
+        return view('admin/customer/customerlist')->with('customerlist', $customer);
     }
     //検索
 

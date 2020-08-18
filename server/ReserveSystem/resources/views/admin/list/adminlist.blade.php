@@ -2,9 +2,9 @@
 @section('content')
 <div>
     <h2 class="d-inline-block">管理者一覧</h2>
-    <a href="/admin/adminCreate" class="btn btn-primary float-right">登録</a>
+    <a href="/admin/admincreate" class="btn btn-primary float-right">登録</a>
 </div>
-@if (isset($adminList))
+@if (isset($adminlist))
 <table class="table table-hover">
     <thead>
         <tr>
@@ -18,7 +18,7 @@
         </tr>
     </thead>
     <tbody>
-    @foreach ($adminList as $item)
+    @foreach ($adminlist as $item)
     <tr>
         <td>{{ $item->id }}</td>
         <td>{{ $item->admin_id }}</td>
@@ -27,7 +27,7 @@
         <td>{{ $item->email }}</td>
         <td>{{ date('Y/m/d', strtotime($item->updated_at)) }}</td>
         <td>
-        <a href="/admin/adminDelete/{{ $item->id }}"class="btn btn-danger">削除</a>
+        <a href="/admin/admindelete/{{ $item->id }}"class="btn btn-danger">削除</a>
         </td>
     </tr>
     @endforeach

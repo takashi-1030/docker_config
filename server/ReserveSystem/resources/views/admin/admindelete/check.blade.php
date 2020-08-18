@@ -1,6 +1,6 @@
 @extends('layout/admin_layout')
 @section('content')
-<form method="post" action="/admin/adminDelete/done/{{ $data->id }}"id="delete_form">
+<form method="post" action="/admin/admindelete/done/{{ $data->id }}"id="delete_form">
     <h2>管理者削除</h2>
     {{ csrf_field() }}
     <table class="table">
