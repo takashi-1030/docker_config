@@ -4,9 +4,50 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reserve;
+use App\Models\ReserveSeat;
+use App\Models\Schedule;
 
 class EventController extends Controller
 {
+    public function reserveCount(Request $request)
+    {
+        $start = $this->formatDate($request->all()['start']);
+        $end = $this->formatDate($request->all()['end']);
+
+        $schedule_count = Schedule::all()->count();
+        $reservable = ($schedule_count - ($schedule_count % 4)) / 4 * 12;
+        $reservable_danger = floor($reservable * 0.7);
+
+        $reserve = ReserveSeat::join('reserves','reserve_seats.reserve_id','=','reserves.id')
+        ->where('reserves.date','2020-08-31')
+        ->count();
+
+        $newArr = [];
+
+        while($start <= $end){
+            $reserve_count = ReserveSeat::join('reserves','reserve_seats.reserve_id','=','reserves.id')
+                                  ->where('reserves.date',$start)
+                                  ->count();
+            if($reserve_count >= $reservable_danger){
+                $newItem["title"] = '△';
+                $newItem["textColor"] = 'red';
+            } elseif($reserve_count == $reservable){
+                $newItem["title"] = '✕';
+                $newItem["textColor"] = 'gray';
+            } else {
+                $newItem["title"] = '◎';
+                $newItem["textColor"] = 'blue';
+            }
+            $newItem["start"] = $start;
+            $newItem["color"] = 'transparent';
+            $newItem["display"] = 'none';
+            $newArr[] = $newItem;
+            $start = date('Y-m-d',strtotime($start.'+1 day'));
+        }
+
+        echo json_encode($newArr);
+    }
+
     public function setEvent(Request $request)
     {
         $start = $this->formatDate($request->all()['start']);

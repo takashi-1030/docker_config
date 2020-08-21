@@ -11,6 +11,7 @@
 @stop
 
 @section('styles')
+<link href="{{ asset('css/event.css') }}" rel="stylesheet">
 <link href="{{ asset('css/modal.css') }}" rel="stylesheet">
 @stop
 
@@ -75,6 +76,7 @@
       },
       locale: 'ja',
       defaultDate: new Date(),
+      events: "/reserveCount",
       fixedWeekCount: false,
       dateClick: function(info) {
         var year = info.date.getFullYear();

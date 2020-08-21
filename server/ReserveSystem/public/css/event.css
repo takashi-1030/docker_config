@@ -1,0 +1,8 @@
+.fc-title {
+    font-size: 3.5rem;
+    margin-left: 30%;
+}
+
+.fc-event-container {
+    pointer-events: none;
+}

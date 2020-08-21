@@ -58,4 +58,5 @@ Route::get('admin/seat', 'AdminController@editAjax');
 Route::get('admin/add/seat', 'AdminController@addAjax');
 
 //Event取得
+Route::get('/reserveCount', 'EventController@reserveCount');
 Route::get('/setEvent', 'EventController@setEvent');
