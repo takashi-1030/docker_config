@@ -148,6 +148,7 @@
         $('.event_title').text(info.event.title);
         $('.link').html('<a class="btn btn-primary" role="button" href="/admin/reserve/' + event_id + '">詳細を見る</a>');
         $('.event-modal').fadeIn();
+        console.log(info);
       }
     });
 

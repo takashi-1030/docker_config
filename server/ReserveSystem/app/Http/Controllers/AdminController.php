@@ -99,10 +99,10 @@ class AdminController extends Controller
             $reserve_record->save();
             $create_reserve_seat = $reserve->create_reserve_seat($request,$id);
             $create_seat = $reserve->create_seat($date,$start,$reserve_seat);
-            if($reserve_record->email != NULL){
-                $send_mail = new SendMailController;
-                $send_mail_create = $send_mail->editNotification($request,$name);
-            }
+            // if($reserve_record->email != NULL){
+            //     $send_mail = new SendMailController;
+            //     $send_mail_create = $send_mail->editNotification($request,$name);
+            // }
 
             return redirect()->action('AdminController@getIndex');
         }
@@ -262,7 +262,7 @@ class AdminController extends Controller
         $reserve_record->ok_flg = 'OK';
         $reserve_record->save();
         $send_mail = new SendMailController;
-        $send_mail_create = $send_mail->confirmNotification($reserve_record);
+        // $send_mail_create = $send_mail->confirmNotification($reserve_record);
 
         return redirect()->action('AdminController@getIndex');
     }

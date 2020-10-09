@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    container_name: web
+    container_name: reserve_web
     build: ./docker
     ports:
       - 80:80
@@ -12,7 +12,7 @@ services:
 
   db:
     image: mysql:5.7
-    container_name: db-host
+    container_name: reserve_db-host
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: docker-database
@@ -28,11 +28,11 @@ services:
       - 3306:3306
 
   phpmyadmin:
-    container_name: phpmyadmin
+    container_name: reserve_phpmyadmin
     image: phpmyadmin/phpmyadmin
     environment:
       - PMA_ARBITRARY=1
-      - PMA_HOSTS=db-host
+      - PMA_HOSTS=reserve_db-host
       - PMA_USER=root
       - PMA_PASSWORD=root
     ports:

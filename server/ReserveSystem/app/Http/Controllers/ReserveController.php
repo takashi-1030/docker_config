@@ -94,7 +94,7 @@ class ReserveController extends Controller
             $create_reserve_seat = $this->create_reserve_seat($request,$id);
             $create_seat = $this->create_seat($date,$start,$reserve_seat);
             $send_mail = new SendMailController;
-            $send_mail_create = $send_mail->notification($request);
+            //$send_mail_create = $send_mail->notification($request);
 
             return view('reserve/reserve_done');
         }
